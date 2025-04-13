@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Prevenção de Infecções e CCIH</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .question {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .question h2 {
+      font-size: 18px;
+    }
+    .options button {
+      display: block;
+      margin: 6px 0;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      background-color: #eee;
+      cursor: pointer;
+      text-align: left;
+    }
+    .options button.correct {
+      background-color: #d4edda;
+      color: green;
+      font-weight: bold;
+    }
+    .options button.incorrect {
+      background-color: #f8d7da;
+      color: red;
+    }
+    .correct-answer {
+      margin-top: 8px;
+      font-weight: bold;
+      color: green;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Quiz: Prevenção de Infecções e CCIH</h1>
+
+  <div id="quiz-container"></div>
+
+  <script>
+    const questions = [
+      { q: "O que significa CCIH?", options: ["Comissão de Controle de Infecção Hospitalar", "Centro de Cuidados Intensivos Hospitalares", "Centro de Controle de Incêndios Hospitalares"], answer: 0 },
+      { q: "Qual o principal objetivo da CCIH?", options: ["Fiscalizar a equipe médica", "Prevenir e controlar infecções hospitalares", "Aplicar vacinas"], answer: 1 },
+      { q: "O que a enfermagem faz para apoiar a CCIH?", options: ["Apenas administra medicamentos", "Cuida da limpeza de superfícies", "Segue protocolos, faz higiene das mãos e orienta o paciente"], answer: 2 },
+      { q: "O que é infecção?", options: ["Acúmulo de pus na pele", "Presença de toxinas no organismo", "Invasão de microrganismos patogênicos causando doença"], answer: 2 },
+      { q: "E inflamação, o que é?", options: ["Infecção bacteriana localizada", "Resposta natural do corpo a agressões", "Acúmulo de microrganismos"], answer: 1 },
+      { q: "Qual a diferença entre antissepsia e assepsia?", options: ["Antissepsia usa técnicas estéreis, assepsia usa álcool", "Antissepsia elimina microrganismos, assepsia previne a contaminação", "Não há diferença"], answer: 1 },
+      { q: "O que é flora residente?", options: ["Microrganismos que causam doenças", "Microrganismos que vivem naturalmente na pele/mucosa", "Bactérias adquiridas no hospital"], answer: 1 },
+      { q: "O que é flora transitória?", options: ["Microrganismos eliminados pelo suor", "Microrganismos da flora intestinal", "Microrganismos do ambiente que podem causar infecção"], answer: 2 },
+      { q: "Qual o papel do CMS?", options: ["Fiscalizar as cirurgias", "Limpar, desinfetar e esterilizar instrumentos e materiais", "Atender os pacientes"], answer: 1 },
+      { q: "Qual a importância do cuidado pré e pós-operatório na prevenção de infecções?", options: ["Evita queda de pressão", "Evita erros médicos", "Garante limpeza, imunidade monitorada e ambiente seguro"], answer: 2 },
+      { q: "Quais são os agentes de defesa do corpo?", options: ["Somente leucócitos", "Pele, mucosa, células imunológicas, anticorpos e secreções", "Somente vacinas"], answer: 1 },
+      { q: "Quais cavidades possuem flora natural?", options: ["Somente intestino", "Somente boca e nariz", "Boca, nariz, trato respiratório superior, intestinos, partes íntimas"], answer: 2 },
+      { q: "Qual o fluxo ideal dentro da unidade cirúrgica?", options: ["Área suja → centro cirúrgico → entrada limpa", "Entrada limpa → preparo → centro cirúrgico → saída por área suja", "Preparo → centro cirúrgico → área de descanso"], answer: 1 },
+      { q: "Como a enfermagem orienta o paciente sobre prevenção de infecções?", options: ["Ensinando sobre antibióticos", "Falando sobre doenças", "Higiene correta, uso de máscaras, cuidado com feridas e repouso"], answer: 2 },
+      { q: "Por que é importante conhecer infecção e controle?", options: ["Para aplicar vacinas", "Para garantir assistência segura e proteger todos", "Para prescrever antibióticos"], answer: 1 },
+      { q: "O que é um artigo crítico?", options: ["Entra em contato com pele íntegra", "Entra em contato com tecidos estéreis ou sistema vascular", "Contato com mucosas"], answer: 1 },
+      { q: "O que é artigo semicrítico?", options: ["Contato com mucosas ou pele não íntegra", "Contato com pele íntegra", "Entra no sistema respiratório"], answer: 0 },
+      { q: "O que é artigo não crítico?", options: ["Contato com mucosa", "Contato com sangue", "Contato com pele íntegra"], answer: 2 },
+      { q: "O que é carga microbiana?", options: ["Número de infecções em um hospital", "Quantidade de microrganismos em um material", "Contaminação cruzada"], answer: 1 },
+      { q: "Qual a ordem correta do processamento de materiais?", options: ["Lavagem → esterilização → inspeção", "Recepção → lavagem → secagem → inspeção → montagem → esterilização → armazenamento → distribuição", "Montagem → lavagem → esterilização"], answer: 1 },
+      { q: "O que é fluxo unidirecional?", options: ["Movimento do paciente", "Evita contaminação cruzada ao seguir um único sentido no processamento", "Processo de esterilização"], answer: 1 },
+      { q: "Como deve ser a estrutura física do CME?", options: ["Piso áspero, ventiladores, janelas abertas", "Separação de áreas, piso liso, sem frestas, boa iluminação", "Ambiente refrigerado"], answer: 1 },
+      { q: "O que acontece com material limpo que retorna ao CME?", options: ["É descartado", "É enviado para o centro cirúrgico", "É inspecionado, e se estiver aberto ou vencido, reprocessado"], answer: 2 },
+      { q: "Quais são as formas de organização do CMS?", options: ["Centralizado, descentralizado e terceirizado", "Privado e público", "Estadual e federal"], answer: 0 },
+      { q: "Como deve ser feita a limpeza com matéria orgânica?", options: ["Álcool 70%", "Sabão neutro e enxágue", "Água corrente, escova e detergente enzimático"], answer: 2 },
+      { q: "Quais métodos de esterilização são comuns?", options: ["Desinfecção a frio", "Vapor saturado, calor seco, óxido de etileno, plasma de peróxido de hidrogênio", "Somente calor"], answer: 1 },
+      { q: "O que é antissepsia?", options: ["Eliminação de microrganismos através de técnicas estéreis", "Uso de substâncias para destruir microrganismos patogênicos", "Prevenção da infecção através de métodos mecânicos"], answer: 1 },
+      { q: "Como deve ser o piso do CME?", options: ["Liso, lavável e sem frestas", "Áspero e resistente", "Piso normal"], answer: 0 },
+      { q: "Por que a ventilação no CME deve ser controlada?", options: ["Para manter o ambiente fresco", "Evitar a contaminação por partículas externas", "Para eliminar odores"], answer: 1 },
+      { q: "Como deve ser feita a esterilização por óxido de etileno?", options: ["Processo rápido, sem necessidade de aeração", "Demorado, com necessidade de aeração após a esterilização", "É uma técnica obsoleta, não utilizada mais"], answer: 1 },
+      { q: "O que é o fluxo contínuo no CME?", options: ["O material circula entre as áreas de maneira descontrolada", "O material deve ir do sujo para o estéril de forma contínua e organizada", "É um fluxo que permite a contaminação do material"], answer: 1 },
+      { q: "Quando é necessário realizar a limpeza de materiais?", options: ["Sempre após cada uso", "Somente quando houver sujeira visível", "Antes de empacotar e esterilizar"], answer: 0 },
+      { q: "Qual o método de esterilização mais utilizado?", options: ["Óxido de etileno", "Vapor saturado sob pressão (autoclave)", "Plasma de peróxido de hidrogênio"], answer: 1 },
+      { q: "Como os artigos críticos devem ser tratados?", options: ["Desinfetados", "Esterilizados", "Limpos com sabão neutro"], answer: 1 },
+      { q: "Qual a função do profissional no CME?", options: ["Verificar a qualidade da comida", "Limpar e desinfetar os materiais", "Acompanhar os pacientes durante a cirurgia"], answer: 1 },
+      { q: "O que é um artigo semicrítico?", options: ["Material que entra em contato com a pele intacta", "Material que entra em contato com mucosas ou pele não íntegra", "Material descartável"], answer: 1 },
+      { q: "O que é a área de recepção no CME?", options: ["Área onde os materiais são armazenados", "Onde o material sujo é recebido", "Área onde são feitas as esterilizações"], answer: 1 },
+      { q: "Qual a principal função da autoclave?", options: ["Desinfetar materiais", "Esterilizar materiais com vapor saturado", "Limpar materiais com alta pressão"], answer: 1 },
+      { q: "Qual a principal vantagem da esterilização por autoclave?", options: ["Esteriliza rapidamente", "Requer pouco tempo de preparação", "É a única técnica disponível"], answer: 0 },
+      { q: "Quando um material deve ser reprocessado?", options: ["Sempre que estiver sujo", "Somente se estiver quebrado", "Se estiver aberto ou vencido"], answer: 2 },
+      { q: "Qual a função do técnico de enfermagem no CME?", options: ["Realizar a esterilização", "Fazer a limpeza de materiais", "Acompanhar pacientes em recuperação"], answer: 1 },
+
+      { q: "Qual a importância do CME na assistência clínica cirúrgica?", options: ["Garantir que todos os materiais e instrumentos utilizados estejam limpos", "Fornecer alimentação aos pacientes", "Realizar exames laboratoriais"], answer: 0 },
+      { q: "Justifique o fluxo direcional dos materiais no CME.", options: ["Evitar contaminação cruzada", "Acumular materiais", "Facilitar o transporte de pacientes"], answer: 0 },
+      { q: "Por que a área de recepção e limpeza são separadas das demais áreas do CME?", options: ["Para evitar a propagação de microrganismos", "Para aumentar a eficiência do atendimento", "Para reduzir custos operacionais"], answer: 0 },
+      { q: "Qual a localização preferencial da CME no hospital?", options: ["Área central do hospital", "Perto da recepção", "Ao lado das enfermarias"], answer: 0 },
+      { q: "O que acontece com o material limpo que retorna ao CME?", options: ["Passa novamente pelo processo de limpeza e esterilização", "É armazenado diretamente", "É descartado"], answer: 0 },
+      { q: "Explique a limpeza de materiais com sujidade orgânica.", options: ["Uso de água corrente e detergente enzimático", "Uso de desinfetantes", "Somente limpeza com sabão neutro"], answer: 0 },
+      { q: "Explique a limpeza com outros tipos de materiais (não orgânicos).", options: ["Uso de detergente neutro", "Uso de água fervente", "Uso de desinfetante"], answer: 0 },
+      { q: "Como ocorre o empacotamento de materiais?", options: ["Com campos cirúrgicos ou papel grau cirúrgico", "Com plásticos", "Em sacos plásticos comuns"], answer: 0 },
+      { q: "Explique os métodos: autoclave, estufa e óxido de etileno.", options: ["Métodos de esterilização", "Métodos de desinfecção", "Métodos de higienização"], answer: 0 }
+    ];
+
+    function createQuiz() {
+      const quizContainer = document.getElementById("quiz-container");
+      questions.forEach((question, index) => {
+        const questionElement = document.createElement("div");
+        questionElement.classList.add("question");
+
+        const questionTitle = document.createElement("h2");
+        questionTitle.textContent = `${index + 1}. ${question.q}`;
+        questionElement.appendChild(questionTitle);
+
+        const optionsContainer = document.createElement("div");
+        optionsContainer.classList.add("options");
+
+        question.options.forEach((option, i) => {
+          const button = document.createElement("button");
+          button.textContent = option;
+          button.addEventListener("click", () => checkAnswer(button, i, question.answer));
+          optionsContainer.appendChild(button);
+        });
+
+        const correctAnswer = document.createElement("p");
+        correctAnswer.textContent = "Resposta correta!";
+        correctAnswer.classList.add("correct-answer");
+
+        questionElement.appendChild(optionsContainer);
+        questionElement.appendChild(correctAnswer);
+        quizContainer.appendChild(questionElement);
+      });
+    }
+
+    function checkAnswer(button, selected, correct) {
+      const parent = button.closest(".question");
+      const buttons = parent.querySelectorAll("button");
+
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        if (parseInt(btn.dataset.index) === correct) {
+          btn.classList.add("correct");
+        } else {
+          btn.classList.add("incorrect");
+        }
+      });
+
+      parent.querySelector(".correct-answer").style.display = "block";
+    }
+
+    createQuiz();
+  </script>
+</body>
+</html>
