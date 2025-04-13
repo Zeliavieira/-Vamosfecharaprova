@@ -2,164 +2,671 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Prevenção de Infecções e CCIH</title>
+  <title>Questionário de Enfermagem</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
       padding: 20px;
-      background: #f4f4f4;
     }
     h1 {
       text-align: center;
-      color: #333;
     }
     .question {
-      margin-bottom: 20px;
-      padding: 15px;
-      background: white;
+      background: #fff;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 15px;
     }
-    .question h2 {
-      font-size: 18px;
-    }
-    .options button {
+    .options label {
       display: block;
-      margin: 6px 0;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      border-radius: 5px;
-      background-color: #eee;
+      margin-bottom: 8px;
       cursor: pointer;
-      text-align: left;
     }
-    .options button.correct {
+    .correct {
       background-color: #d4edda;
-      color: green;
-      font-weight: bold;
     }
-    .options button.incorrect {
+    .wrong {
       background-color: #f8d7da;
-      color: red;
     }
-    .correct-answer {
-      margin-top: 8px;
-      font-weight: bold;
-      color: green;
-      display: none;
+    button {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
 
-  <h1>Quiz: Prevenção de Infecções e CCIH</h1>
-
-  <div id="quiz-container"></div>
+  <h1>Questionário de Enfermagem (57 Questões)</h1>
+  <div id="quiz"></div>
+  <button onclick="verificarRespostas()">Verificar Respostas</button>
 
   <script>
-    const questions = [
-      { q: "O que significa CCIH?", options: ["Comissão de Controle de Infecção Hospitalar", "Centro de Cuidados Intensivos Hospitalares", "Centro de Controle de Incêndios Hospitalares"], answer: 0 },
-      { q: "Qual o principal objetivo da CCIH?", options: ["Fiscalizar a equipe médica", "Prevenir e controlar infecções hospitalares", "Aplicar vacinas"], answer: 1 },
-      { q: "O que a enfermagem faz para apoiar a CCIH?", options: ["Apenas administra medicamentos", "Cuida da limpeza de superfícies", "Segue protocolos, faz higiene das mãos e orienta o paciente"], answer: 2 },
-      { q: "O que é infecção?", options: ["Acúmulo de pus na pele", "Presença de toxinas no organismo", "Invasão de microrganismos patogênicos causando doença"], answer: 2 },
-      { q: "E inflamação, o que é?", options: ["Infecção bacteriana localizada", "Resposta natural do corpo a agressões", "Acúmulo de microrganismos"], answer: 1 },
-      { q: "Qual a diferença entre antissepsia e assepsia?", options: ["Antissepsia usa técnicas estéreis, assepsia usa álcool", "Antissepsia elimina microrganismos, assepsia previne a contaminação", "Não há diferença"], answer: 1 },
-      { q: "O que é flora residente?", options: ["Microrganismos que causam doenças", "Microrganismos que vivem naturalmente na pele/mucosa", "Bactérias adquiridas no hospital"], answer: 1 },
-      { q: "O que é flora transitória?", options: ["Microrganismos eliminados pelo suor", "Microrganismos da flora intestinal", "Microrganismos do ambiente que podem causar infecção"], answer: 2 },
-      { q: "Qual o papel do CMS?", options: ["Fiscalizar as cirurgias", "Limpar, desinfetar e esterilizar instrumentos e materiais", "Atender os pacientes"], answer: 1 },
-      { q: "Qual a importância do cuidado pré e pós-operatório na prevenção de infecções?", options: ["Evita queda de pressão", "Evita erros médicos", "Garante limpeza, imunidade monitorada e ambiente seguro"], answer: 2 },
-      { q: "Quais são os agentes de defesa do corpo?", options: ["Somente leucócitos", "Pele, mucosa, células imunológicas, anticorpos e secreções", "Somente vacinas"], answer: 1 },
-      { q: "Quais cavidades possuem flora natural?", options: ["Somente intestino", "Somente boca e nariz", "Boca, nariz, trato respiratório superior, intestinos, partes íntimas"], answer: 2 },
-      { q: "Qual o fluxo ideal dentro da unidade cirúrgica?", options: ["Área suja → centro cirúrgico → entrada limpa", "Entrada limpa → preparo → centro cirúrgico → saída por área suja", "Preparo → centro cirúrgico → área de descanso"], answer: 1 },
-      { q: "Como a enfermagem orienta o paciente sobre prevenção de infecções?", options: ["Ensinando sobre antibióticos", "Falando sobre doenças", "Higiene correta, uso de máscaras, cuidado com feridas e repouso"], answer: 2 },
-      { q: "Por que é importante conhecer infecção e controle?", options: ["Para aplicar vacinas", "Para garantir assistência segura e proteger todos", "Para prescrever antibióticos"], answer: 1 },
-      { q: "O que é um artigo crítico?", options: ["Entra em contato com pele íntegra", "Entra em contato com tecidos estéreis ou sistema vascular", "Contato com mucosas"], answer: 1 },
-      { q: "O que é artigo semicrítico?", options: ["Contato com mucosas ou pele não íntegra", "Contato com pele íntegra", "Entra no sistema respiratório"], answer: 0 },
-      { q: "O que é artigo não crítico?", options: ["Contato com mucosa", "Contato com sangue", "Contato com pele íntegra"], answer: 2 },
-      { q: "O que é carga microbiana?", options: ["Número de infecções em um hospital", "Quantidade de microrganismos em um material", "Contaminação cruzada"], answer: 1 },
-      { q: "Qual a ordem correta do processamento de materiais?", options: ["Lavagem → esterilização → inspeção", "Recepção → lavagem → secagem → inspeção → montagem → esterilização → armazenamento → distribuição", "Montagem → lavagem → esterilização"], answer: 1 },
-      { q: "O que é fluxo unidirecional?", options: ["Movimento do paciente", "Evita contaminação cruzada ao seguir um único sentido no processamento", "Processo de esterilização"], answer: 1 },
-      { q: "Como deve ser a estrutura física do CME?", options: ["Piso áspero, ventiladores, janelas abertas", "Separação de áreas, piso liso, sem frestas, boa iluminação", "Ambiente refrigerado"], answer: 1 },
-      { q: "O que acontece com material limpo que retorna ao CME?", options: ["É descartado", "É enviado para o centro cirúrgico", "É inspecionado, e se estiver aberto ou vencido, reprocessado"], answer: 2 },
-      { q: "Quais são as formas de organização do CMS?", options: ["Centralizado, descentralizado e terceirizado", "Privado e público", "Estadual e federal"], answer: 0 },
-      { q: "Como deve ser feita a limpeza com matéria orgânica?", options: ["Álcool 70%", "Sabão neutro e enxágue", "Água corrente, escova e detergente enzimático"], answer: 2 },
-      { q: "Quais métodos de esterilização são comuns?", options: ["Desinfecção a frio", "Vapor saturado, calor seco, óxido de etileno, plasma de peróxido de hidrogênio", "Somente calor"], answer: 1 },
-      { q: "O que é antissepsia?", options: ["Eliminação de microrganismos através de técnicas estéreis", "Uso de substâncias para destruir microrganismos patogênicos", "Prevenção da infecção através de métodos mecânicos"], answer: 1 },
-      { q: "Como deve ser o piso do CME?", options: ["Liso, lavável e sem frestas", "Áspero e resistente", "Piso normal"], answer: 0 },
-      { q: "Por que a ventilação no CME deve ser controlada?", options: ["Para manter o ambiente fresco", "Evitar a contaminação por partículas externas", "Para eliminar odores"], answer: 1 },
-      { q: "Como deve ser feita a esterilização por óxido de etileno?", options: ["Processo rápido, sem necessidade de aeração", "Demorado, com necessidade de aeração após a esterilização", "É uma técnica obsoleta, não utilizada mais"], answer: 1 },
-      { q: "O que é o fluxo contínuo no CME?", options: ["O material circula entre as áreas de maneira descontrolada", "O material deve ir do sujo para o estéril de forma contínua e organizada", "É um fluxo que permite a contaminação do material"], answer: 1 },
-      { q: "Quando é necessário realizar a limpeza de materiais?", options: ["Sempre após cada uso", "Somente quando houver sujeira visível", "Antes de empacotar e esterilizar"], answer: 0 },
-      { q: "Qual o método de esterilização mais utilizado?", options: ["Óxido de etileno", "Vapor saturado sob pressão (autoclave)", "Plasma de peróxido de hidrogênio"], answer: 1 },
-      { q: "Como os artigos críticos devem ser tratados?", options: ["Desinfetados", "Esterilizados", "Limpos com sabão neutro"], answer: 1 },
-      { q: "Qual a função do profissional no CME?", options: ["Verificar a qualidade da comida", "Limpar e desinfetar os materiais", "Acompanhar os pacientes durante a cirurgia"], answer: 1 },
-      { q: "O que é um artigo semicrítico?", options: ["Material que entra em contato com a pele intacta", "Material que entra em contato com mucosas ou pele não íntegra", "Material descartável"], answer: 1 },
-      { q: "O que é a área de recepção no CME?", options: ["Área onde os materiais são armazenados", "Onde o material sujo é recebido", "Área onde são feitas as esterilizações"], answer: 1 },
-      { q: "Qual a principal função da autoclave?", options: ["Desinfetar materiais", "Esterilizar materiais com vapor saturado", "Limpar materiais com alta pressão"], answer: 1 },
-      { q: "Qual a principal vantagem da esterilização por autoclave?", options: ["Esteriliza rapidamente", "Requer pouco tempo de preparação", "É a única técnica disponível"], answer: 0 },
-      { q: "Quando um material deve ser reprocessado?", options: ["Sempre que estiver sujo", "Somente se estiver quebrado", "Se estiver aberto ou vencido"], answer: 2 },
-      { q: "Qual a função do técnico de enfermagem no CME?", options: ["Realizar a esterilização", "Fazer a limpeza de materiais", "Acompanhar pacientes em recuperação"], answer: 1 },
-
-      { q: "Qual a importância do CME na assistência clínica cirúrgica?", options: ["Garantir que todos os materiais e instrumentos utilizados estejam limpos", "Fornecer alimentação aos pacientes", "Realizar exames laboratoriais"], answer: 0 },
-      { q: "Justifique o fluxo direcional dos materiais no CME.", options: ["Evitar contaminação cruzada", "Acumular materiais", "Facilitar o transporte de pacientes"], answer: 0 },
-      { q: "Por que a área de recepção e limpeza são separadas das demais áreas do CME?", options: ["Para evitar a propagação de microrganismos", "Para aumentar a eficiência do atendimento", "Para reduzir custos operacionais"], answer: 0 },
-      { q: "Qual a localização preferencial da CME no hospital?", options: ["Área central do hospital", "Perto da recepção", "Ao lado das enfermarias"], answer: 0 },
-      { q: "O que acontece com o material limpo que retorna ao CME?", options: ["Passa novamente pelo processo de limpeza e esterilização", "É armazenado diretamente", "É descartado"], answer: 0 },
-      { q: "Explique a limpeza de materiais com sujidade orgânica.", options: ["Uso de água corrente e detergente enzimático", "Uso de desinfetantes", "Somente limpeza com sabão neutro"], answer: 0 },
-      { q: "Explique a limpeza com outros tipos de materiais (não orgânicos).", options: ["Uso de detergente neutro", "Uso de água fervente", "Uso de desinfetante"], answer: 0 },
-      { q: "Como ocorre o empacotamento de materiais?", options: ["Com campos cirúrgicos ou papel grau cirúrgico", "Com plásticos", "Em sacos plásticos comuns"], answer: 0 },
-      { q: "Explique os métodos: autoclave, estufa e óxido de etileno.", options: ["Métodos de esterilização", "Métodos de desinfecção", "Métodos de higienização"], answer: 0 }
+    const perguntas = [
+      {
+        pergunta: "1. Como a atuação da enfermagem oferece suporte ao paciente durante procedimentos cirúrgicos?",
+        opcoes: [
+          "Apenas prepara os materiais cirúrgicos.",
+          "Acompanha o médico sem interagir com o paciente.",
+          "Prepara o paciente, acolhe emocionalmente, realiza cuidados e colabora com a equipe médica.",
+          "Dá alta ao paciente após a cirurgia."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "2. Quais orientações o profissional de enfermagem pode fornecer ao paciente antes de uma cirurgia?",
+        opcoes: [
+          "Indicar o quarto do hospital.",
+          "Orientar sobre jejum, acessórios, banho, medicamentos e acalmar o paciente.",
+          "Ensinar o paciente a operar os equipamentos.",
+          "Avisar somente a família."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "3. Qual é a importância da enfermagem na condução de cuidados pré e pós-operatórios?",
+        opcoes: [
+          "Auxiliar apenas no transporte do paciente.",
+          "Garantir a estética da sala de cirurgia.",
+          "Prevenir infecções, controlar a dor e monitorar sinais vitais.",
+          "Apenas limpar o leito."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "4. Qual a diferença entre infecção e inflamação?",
+        opcoes: [
+          "Infecção é uma alergia e inflamação é uma doença autoimune.",
+          "Infecção é causada por germes e inflamação é a resposta do corpo.",
+          "Infecção é interna e inflamação é externa.",
+          "Não há diferença."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "5. Quais são os sinais clínicos de uma inflamação?",
+        opcoes: [
+          "Cansaço e sonolência.",
+          "Febre e pressão alta.",
+          "Vermelhidão, dor, calor, inchaço e perda de função.",
+          "Tontura e náusea."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "6. O que caracteriza uma infecção hospitalar?",
+        opcoes: [
+          "Infecção que ocorre em casa.",
+          "Infecção presente ao entrar no hospital.",
+          "Infecção adquirida após 48h de internação.",
+          "Infecção leve após consulta médica."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "7. Quais são os principais agentes de defesa do corpo humano?",
+        opcoes: [
+          "Barreiras naturais (pele e mucosas), células de defesa (leucócitos) e anticorpos.",
+          "Órgãos internos como fígado e rins.",
+          "Hormônios produzidos pelo cérebro.",
+          "Alimentos que consumimos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "8. Qual a diferença entre imunidade inata e adquirida?",
+        opcoes: [
+          "Imunidade inata é a que adquirimos ao longo da vida e adquirida é a que nasce com a gente.",
+          "Imunidade inata é natural e adquirida é desenvolvida ao longo da vida após contato com patógenos.",
+          "Ambas são a mesma coisa.",
+          "Imunidade adquirida é a que os pais transmitem aos filhos."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "9. O que é flora residente e qual sua função?",
+        opcoes: [
+          "São os alimentos que ingerimos.",
+          "São micro-organismos que vivem na pele e mucosas e ajudam a prevenir infecções.",
+          "São as células do sistema imunológico.",
+          "São vírus que infectam o corpo."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "10. Qual a função do sistema nervoso na resposta inflamatória?",
+        opcoes: [
+          "Ativar as defesas do corpo e regular a inflamação.",
+          "Controlar os batimentos cardíacos.",
+          "Produzir anticorpos.",
+          "Ajudar na digestão dos alimentos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "11. O que é flora residente da pele?",
+        opcoes: [
+          "Bactérias que vivem naturalmente na pele, protegendo contra micro-organismos nocivos.",
+          "A camada de células mortas da pele.",
+          "Órgãos internos que combatem infecções.",
+          "Vírus presentes na pele."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "12. Quais cavidades do corpo são suscetíveis a infecções?",
+        opcoes: [
+          "Cavidade bucal, nasal, torácica, abdominal e pélvica.",
+          "Somente a cavidade torácica.",
+          "Somente a cavidade nasal.",
+          "Somente a cavidade abdominal."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "13. Como a pele atua como barreira contra infecções?",
+        opcoes: [
+          "Ela secreta substâncias que ajudam na defesa e impede a entrada de micro-organismos.",
+          "Ela é transparente e permite que a luz entre.",
+          "Ela ajuda a manter o corpo aquecido.",
+          "Ela filtra a água do corpo."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "14. Como o ambiente hospitalar pode favorecer infecções?",
+        opcoes: [
+          "Pela presença de muitos pacientes, uso de equipamentos e procedimentos invasivos e falhas na higienização.",
+          "Porque o ambiente é sempre limpo.",
+          "Porque os pacientes estão sempre protegidos por EPIs.",
+          "Porque há muitos médicos disponíveis."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "15. Por que a esterilização dos instrumentos é tão importante?",
+        opcoes: [
+          "Porque elimina micro-organismos e previne a transmissão de infecções aos pacientes.",
+          "Porque limpa os instrumentos.",
+          "Porque remove a sujeira visível.",
+          "Porque os instrumentos ficam mais bonitos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "16. Qual é a função do CME no hospital?",
+        opcoes: [
+          "Apoiar o paciente em recuperação.",
+          "Garantir que os materiais e instrumentos estejam esterilizados corretamente.",
+          "Ajudar na alimentação dos pacientes.",
+          "Controlar os custos do hospital."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "17. O que é a CCIH e qual sua responsabilidade?",
+        opcoes: [
+          "É a Comissão de Controle de Infecção Hospitalar, responsável por planejar e monitorar as ações de controle de infecções.",
+          "É a comissão responsável pela contratação de funcionários.",
+          "É a comissão que cuida da decoração do hospital.",
+          "É a comissão que administra as finanças do hospital."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "18. Como o CME ajuda na prevenção de infecção hospitalar?",
+        opcoes: [
+          "Garantindo que todos os materiais sejam esterilizados corretamente.",
+          "Apenas monitorando o trabalho dos médicos.",
+          "Fornecendo alimentos aos pacientes.",
+          "Ajudando os pacientes a se acomodarem no leito."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "19. Por que o fluxo de materiais no CME é unidirecional?",
+        opcoes: [
+          "Para evitar que materiais sujos entrem em contato com os materiais limpos e causem contaminação cruzada.",
+          "Para tornar o trabalho mais rápido.",
+          "Para facilitar o transporte de pacientes.",
+          "Para garantir que os materiais sejam transportados rapidamente."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "20. Por que a área de recepção e limpeza são separadas das demais no CME?",
+        opcoes: [
+          "Para evitar a contaminação de materiais limpos com germes e sujeira.",
+          "Para melhorar a decoração do hospital.",
+          "Porque é mais econômico.",
+          "Porque os materiais sujos são jogados fora imediatamente."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "21. Qual a localização ideal do CME no hospital?",
+        opcoes: [
+          "Próximo ao centro cirúrgico e de áreas assistenciais.",
+          "Na ala administrativa.",
+          "No estacionamento.",
+          "No refeitório."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "22. O que acontece com o material limpo que retorna ao CME?",
+        opcoes: [
+          "Ele passa por nova avaliação e pode ser reprocessado para garantir que está corretamente esterilizado.",
+          "É descartado.",
+          "É devolvido ao paciente.",
+          "É reutilizado sem qualquer verificação."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "23. Como é feita a limpeza de material com resíduos orgânicos?",
+        opcoes: [
+          "Remoção manual dos resíduos e lavagem com detergente enzimático.",
+          "Apenas enxágue com água.",
+          "É jogado fora diretamente.",
+          "É limpo com álcool."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "24. Como é a limpeza de outros materiais hospitalares?",
+        opcoes: [
+          "Com água corrente, sabão ou detergente neutro, e enxágue completo.",
+          "Com produtos de limpeza comuns.",
+          "Com álcool apenas.",
+          "Com detergentes industriais."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "25. Como é o empacotamento para autoclave?",
+        opcoes: [
+          "Com papel grau cirúrgico ou tecidos próprios, permitindo a passagem de vapor e garantindo a esterilização.",
+          "Com plástico comum.",
+          "Com jornais.",
+          "Com papéis de presente."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "26. Como é o empacotamento para estufa?",
+        opcoes: [
+          "Com papel kraft ou tecido resistente ao calor seco.",
+          "Com plásticos.",
+          "Com papel alumínio.",
+          "Com tecidos finos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "27. Como é o empacotamento para óxido de etileno?",
+        opcoes: [
+          "Utiliza embalagem especial que permite a entrada do gás e garante a segurança do material.",
+          "Com plástico comum.",
+          "Com papel comum.",
+          "Com material descartável."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "28. O que é e como funciona a esterilização por vapor sob pressão?",
+        opcoes: [
+          "Feita em autoclave, usando vapor de água quente sob pressão para matar todos os micro-organismos.",
+          "Feita com luz ultravioleta.",
+          "Feita com produtos químicos.",
+          "Feita com ar quente."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "29. O que é a esterilização por calor seco?",
+        opcoes: [
+          "Utiliza estufas com altas temperaturas, indicada para materiais que não suportam umidade.",
+          "É feita com óxido de etileno.",
+          "É feita com vapor.",
+          "É feita com radiação."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "30. O que é a esterilização por óxido de etileno?",
+        opcoes: [
+          "Gás tóxico que penetra embalagens e materiais, usado para esterilizar materiais sensíveis ao calor.",
+          "É realizada com vapor de água.",
+          "É feita com radiação.",
+          "Utiliza luz intensa."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "31. O que é esterilização por plasma de peróxido de hidrogênio?",
+        opcoes: [
+          "Técnica moderna que utiliza plasma para eliminar micro-organismos, rápida e segura, indicada para materiais sensíveis ao calor.",
+          "Usa radiação.",
+          "É realizada com calor intenso.",
+          "Utiliza agentes químicos tóxicos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "32. Qual a diferença entre desinfecção e esterilização?",
+        opcoes: [
+          "A desinfecção elimina a maioria dos microrganismos, exceto esporos, enquanto a esterilização elimina todos os microrganismos, incluindo os esporos.",
+          "A desinfecção mata todos os microrganismos.",
+          "A esterilização elimina todos os microrganismos, exceto os vírus.",
+          "Não há diferença."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "33. Qual é o método mais comum de esterilização?",
+        opcoes: [
+          "Esterilização com vapor saturado sob pressão (autoclave).",
+          "Esterilização com luz UV.",
+          "Esterilização com radiação.",
+          "Esterilização a frio."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "34. Qual é a função da autoclave?",
+        opcoes: [
+          "Esterilizar materiais utilizando vapor saturado sob pressão.",
+          "Limpar materiais com radiação.",
+          "Desinfetar materiais com produtos químicos.",
+          "Armazenar materiais médicos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "35. Qual é o método de esterilização utilizado para materiais sensíveis ao calor?",
+        opcoes: [
+          "Óxido de etileno (ETO).",
+          "Vapor de água.",
+          "Calor seco.",
+          "Radiação."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "36. Qual é o principal objetivo da desinfecção de alto nível?",
+        opcoes: [
+          "Eliminar microrganismos patogênicos, exceto esporos.",
+          "Eliminar todos os microrganismos.",
+          "Remover sujeiras visíveis.",
+          "Proteger contra radiação."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "37. Qual é a primeira etapa do processo de esterilização de materiais?",
+        opcoes: [
+          "Limpeza e lavagem dos materiais.",
+          "Autoclavação dos materiais.",
+          "Desinfecção com álcool.",
+          "Esterilização com radiação."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "38. Como deve ser feito o controle de qualidade de materiais esterilizados?",
+        opcoes: [
+          "Utilizando testes biológicos e indicadores químicos.",
+          "Com verificações manuais apenas.",
+          "Com a opinião dos profissionais.",
+          "Com observação visual apenas."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "39. O que é necessário para garantir que um material esteja esterilizado após o processo?",
+        opcoes: [
+          "Controle de temperatura e pressão durante o processo de esterilização.",
+          "Aparência do material.",
+          "O tempo em que o material foi deixado na autoclave.",
+          "A opinião dos enfermeiros."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "40. Qual é a função dos indicadores químicos e biológicos em processos de esterilização?",
+        opcoes: [
+          "Monitorar e verificar se os parâmetros de esterilização foram atingidos.",
+          "Verificar a quantidade de materiais.",
+          "Limpar os materiais.",
+          "Armazenar os materiais."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "41. O que deve ser feito caso o indicador biológico não mostre um resultado satisfatório?",
+        opcoes: [
+          "Repetir o processo de esterilização até que o resultado seja satisfatório.",
+          "Descartar todos os materiais.",
+          "Procurar um novo método de esterilização.",
+          "Deixar os materiais de lado."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "42. O que é uma unidade de esterilização?",
+        opcoes: [
+          "É o espaço onde se realizam os processos de esterilização dos materiais.",
+          "É a unidade médica que cuida dos pacientes internados.",
+          "É uma área de vigilância epidemiológica.",
+          "É a sala de descanso dos profissionais de saúde."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "43. Como a esterilização de materiais influencia na qualidade do atendimento ao paciente?",
+        opcoes: [
+          "Garante a segurança do paciente, prevenindo infecções.",
+          "Acelera o atendimento.",
+          "Melhora o conforto do paciente.",
+          "Apenas torna o ambiente mais limpo."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "44. O que é a vigilância epidemiológica no contexto hospitalar?",
+        opcoes: [
+          "É a coleta, análise e interpretação de dados sobre doenças e infecções no hospital, para prevenir surtos e epidemias.",
+          "É o controle de alimentos servidos aos pacientes.",
+          "É o controle de medicamentos administrados.",
+          "É a avaliação dos médicos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "45. Qual a importância da vigilância epidemiológica em hospitais?",
+        opcoes: [
+          "Identificar e controlar surtos de doenças e infecções dentro do hospital.",
+          "Monitorar o tempo de internação dos pacientes.",
+          "Garantir que todos os pacientes sejam atendidos rapidamente.",
+          "Controlar as finanças do hospital."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "46. O que são as normas de precauções padrão?",
+        opcoes: [
+          "Medidas que devem ser adotadas para prevenir a transmissão de infecções, como o uso de EPIs.",
+          "Normas para organização do hospital.",
+          "Medidas para melhorar a alimentação dos pacientes.",
+          "Normas administrativas para os funcionários."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "47. Quais os principais tipos de precauções adicionais no hospital?",
+        opcoes: [
+          "Precauções para infecções por contato, gotículas e aerossóis.",
+          "Precauções para o tipo de comida do paciente.",
+          "Precauções para o tempo de internação.",
+          "Precauções para a higiene do ambiente."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "48. O que são as precauções para infecções por contato?",
+        opcoes: [
+          "Medidas como uso de luvas, aventais e cuidados específicos para infecções transmitidas pelo contato direto.",
+          "Uso de máscara e luvas.",
+          "Desinfecção com produtos químicos.",
+          "Controle de tempo de internação."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "49. O que são as precauções para infecções por gotículas?",
+        opcoes: [
+          "Medidas para proteger contra infecções transmitidas por partículas que viajam pelo ar a curtas distâncias.",
+          "Uso de medicamentos.",
+          "Afastamento dos pacientes.",
+          "Desinfecção do ambiente."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "50. O que são as precauções para infecções por aerossóis?",
+        opcoes: [
+          "Medidas para proteger contra infecções transmitidas por partículas menores, que ficam suspensas no ar por longas distâncias.",
+          "Uso de máscara apenas.",
+          "Afastamento dos médicos.",
+          "Uso de ventiladores."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "51. O que são as precauções de contato com secreções?",
+        opcoes: [
+          "Medidas para evitar o contato com secreções do paciente, como uso de luvas e aventais.",
+          "Uso de máscaras.",
+          "Desinfecção do ambiente.",
+          "Limpeza dos equipamentos."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "52. Como as infecções por via respiratória se transmitem?",
+        opcoes: [
+          "Por gotículas respiratórias emitidas ao falar, tossir ou espirrar.",
+          "Por contato com alimentos.",
+          "Por contato com superfícies.",
+          "Por sangue."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "53. O que são precauções para infecções por sangue?",
+        opcoes: [
+          "Medidas para prevenir o contato com sangue, como o uso de luvas e roupas de proteção.",
+          "Uso de medicamentos.",
+          "Afastamento de pacientes.",
+          "Desinfecção do ambiente."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "54. O que são as precauções com instrumentos médicos?",
+        opcoes: [
+          "Cuidados com a limpeza, desinfecção e esterilização dos instrumentos médicos.",
+          "Uso de medicamentos.",
+          "Uso de roupas de proteção.",
+          "Afastamento de pacientes."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "55. Quais são as principais formas de transmissão de infecções?",
+        opcoes: [
+          "Contato direto, gotículas, aerossóis, e exposição a fluidos corporais.",
+          "Somente por alimentos.",
+          "Somente por contato direto.",
+          "Somente por ar."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "56. Como prevenir infecções hospitalares?",
+        opcoes: [
+          "Seguindo as normas de precauções padrão e adicionais, higienizando as mãos, usando EPIs e mantendo o ambiente limpo.",
+          "Somente com uso de medicamentos.",
+          "Somente com desinfecção do ambiente.",
+          "Somente com afastamento dos pacientes."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "57. Como a higiene das mãos contribui para a prevenção de infecções?",
+        opcoes: [
+          "Evita a transmissão de germes e micro-organismos através do contato.",
+          "Não tem impacto.",
+          "Fazendo com que o paciente se sinta mais confortável.",
+          "Evita o cansaço dos profissionais de saúde."
+        ],
+        correta: 0
+      }
     ];
 
-    function createQuiz() {
-      const quizContainer = document.getElementById("quiz-container");
-      questions.forEach((question, index) => {
-        const questionElement = document.createElement("div");
-        questionElement.classList.add("question");
+    function criarQuestionario() {
+      const quiz = document.getElementById('quiz');
+      perguntas.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.classList.add('question');
+        div.innerHTML = `<strong>${q.pergunta}</strong><div class="options">` +
+          q.opcoes.map((op, i) => `
+            <label>
+              <input type="radio" name="q${index}" value="${i}">
+              ${op}
+            </label>`).join('') +
+          `</div>`;
+        quiz.appendChild(div);
+      });
+    }
 
-        const questionTitle = document.createElement("h2");
-        questionTitle.textContent = `${index + 1}. ${question.q}`;
-        questionElement.appendChild(questionTitle);
-
-        const optionsContainer = document.createElement("div");
-        optionsContainer.classList.add("options");
-
-        question.options.forEach((option, i) => {
-          const button = document.createElement("button");
-          button.textContent = option;
-          button.addEventListener("click", () => checkAnswer(button, i, question.answer));
-          optionsContainer.appendChild(button);
+    function verificarRespostas() {
+      perguntas.forEach((q, index) => {
+        const radios = document.getElementsByName(`q${index}`);
+        let selectedValue = null;
+        radios.forEach((radio, i) => {
+          const label = radio.parentElement;
+          label.classList.remove('correct', 'wrong');
+          if (radio.checked) {
+            selectedValue = i;
+          }
         });
 
-        const correctAnswer = document.createElement("p");
-        correctAnswer.textContent = "Resposta correta!";
-        correctAnswer.classList.add("correct-answer");
-
-        questionElement.appendChild(optionsContainer);
-        questionElement.appendChild(correctAnswer);
-        quizContainer.appendChild(questionElement);
+        radios.forEach((radio, i) => {
+          const label = radio.parentElement;
+          if (i === q.correta) {
+            label.classList.add('correct'); // Cor verde para a alternativa correta
+          }
+          if (i === selectedValue && selectedValue !== q.correta) {
+            label.classList.add('wrong'); // Cor vermelha para a alternativa errada
+          }
+        });
       });
     }
 
-    function checkAnswer(button, selected, correct) {
-      const parent = button.closest(".question");
-      const buttons = parent.querySelectorAll("button");
-
-      buttons.forEach(btn => {
-        btn.disabled = true;
-        if (parseInt(btn.dataset.index) === correct) {
-          btn.classList.add("correct");
-        } else {
-          btn.classList.add("incorrect");
-        }
-      });
-
-      parent.querySelector(".correct-answer").style.display = "block";
-    }
-
-    createQuiz();
+    criarQuestionario();
   </script>
+
 </body>
 </html>
